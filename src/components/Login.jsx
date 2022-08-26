@@ -2,10 +2,13 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
+import {Routes,Route,useNavigate} from 'react-router-dom';
+
 import apiSlice, { login } from '../slices/apiSlice';
 
 export default function LoginPage() {
   let dispatch = useDispatch(apiSlice)
+     let goTo = useNavigate()
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -36,7 +39,7 @@ export default function LoginPage() {
         </Form>
     )}
 </Formik>
-<p>No Account? <button>Create Account</button></p>
+<p>No Account? <button onClick={()=>goTo("/signup")} >Create Account</button></p>
 </div>
   )
 }

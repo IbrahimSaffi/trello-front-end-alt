@@ -2,10 +2,13 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import apiSlice, { createAccount } from '../slices/apiSlice';
+import {Routes,Route,useNavigate} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+
 
 export default function SignUpPage() {
   let dispatch = useDispatch(apiSlice)
+     let goTo =  useNavigate()
   const SignupSchema = Yup.object().shape({
     userName: Yup.string()
       .min(3, 'Too Short!')
@@ -27,10 +30,13 @@ export default function SignUpPage() {
         passwordCheck: '',
       }}
       validationSchema={SignupSchema}
+      //Some bug here, Will debug
       onSubmit={
         values => {
           console.log("here")
-          dispatch(createAccount(values))}
+          console.log(values)
+          dispatch(createAccount(values))
+        }
       }
     >
       {({ errors, touched }) => (
@@ -58,13 +64,13 @@ export default function SignUpPage() {
           {errors.passwordCheck && touched.passwordCheck ? (
             <div>{errors.passwordCheck}</div>
           ) : null}
-          <button type='submit' >Create Account</button>
+          <button type='submit' onClick={()=>console.log("clicked")}>Create Account</button>
         </Form>
       )}
     </Formik>
     <p>
-    Already have a user?
-    <button>Login</button>
+    Already a user?
+    <button onClick={()=>goTo("/login")} >Login</button>
     </p>
     </div>
 
