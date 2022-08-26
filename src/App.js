@@ -2,7 +2,7 @@ import './App.css';
 import CardsSection from './components/CardsSection';
 import LoginPage from './components/Login';
 import SignUpPage from './components/Signup';
- 
+
 function App() {
   return (
     <div className="app">
