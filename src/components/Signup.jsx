@@ -2,15 +2,19 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import apiSlice, { createAccount } from '../slices/apiSlice';
-import {Routes,Route,useNavigate} from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 
 export default function SignUpPage() {
   let dispatch = useDispatch(apiSlice)
-     let goTo =  useNavigate()
+  let goTo = useNavigate()
   const SignupSchema = Yup.object().shape({
-    userName: Yup.string()
+    firstName: Yup.string()
+      .min(3, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
+    lastName: Yup.string()
       .min(3, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Required'),
@@ -64,14 +68,14 @@ export default function SignUpPage() {
           {errors.passwordCheck && touched.passwordCheck ? (
             <div>{errors.passwordCheck}</div>
           ) : null}
-          <button type='submit' onClick={()=>console.log("clicked")}>Create Account</button>
+          <button type='submit' onClick={() => console.log("clicked")}>Create Account</button>
         </Form>
       )}
     </Formik>
-    <p>
-    Already a user?
-    <button onClick={()=>goTo("/login")} >Login</button>
-    </p>
+      <p>
+        Already a user?
+        <button onClick={() => goTo("/login")} >Login</button>
+      </p>
     </div>
 
   )

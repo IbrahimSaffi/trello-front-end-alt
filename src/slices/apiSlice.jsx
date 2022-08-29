@@ -1,18 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-const API_URL = 'http://localhost:3000/';
+const API_URL = 'http://localhost:8000/';
 
 export const getTasks = createAsyncThunk(
     "tasks / get",
     async () => {
-        const data = await fetch(API_URL + "")
+        const data = await fetch(API_URL + "tasks")
         return data.json()
     }
 )
+//formdata
 export const createTask = createAsyncThunk(
     "tasks / create",
     async (data) => {
         console.log(data)
-        await fetch(API_URL + "", {
+        await fetch(API_URL + "add", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -21,6 +22,7 @@ export const createTask = createAsyncThunk(
         })
     }
 )
+//No endpoint yet
 export const updateTask = createAsyncThunk(
     "tasks / update",
     async (data) => {
@@ -37,21 +39,29 @@ export const updateTask = createAsyncThunk(
 export const createAccount = createAsyncThunk(
     "account / create",
     async (data) => {
-        console.log(data)
-        await fetch(API_URL + "", {
+        let res = await fetch(API_URL + "auth/signup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         })
+        if (res.status !== 200) {
+            let e = await res.json()
+            throw new Error(e.error)
+        }
+        else {
+            let resdata = await res.text()
+            return resdata
+        }
     }
+
 )
 export const login = createAsyncThunk(
     "account / login",
     async (data) => {
         console.log(data)
-        let res = await fetch(API_URL + "", {
+        let res = await fetch(API_URL + "auth/signin", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,7 +70,8 @@ export const login = createAsyncThunk(
         })
         console.log(res.status)
         if (res.status !== 200) {
-            throw new Error(res)
+            let e = await res.json()
+            throw new Error(e.error)
         }
         else {
             let resdata = await res.text()
@@ -71,7 +82,7 @@ export const login = createAsyncThunk(
 export const getUsers = createAsyncThunk(
     "users / get",
     async (data) => {
-        let res = await fetch(API_URL + "")
+        let res = await fetch(API_URL + "tasks/get-all-users")
         console.log(res.status)
         if (res.status !== 200) {
             throw new Error(res)
@@ -89,7 +100,7 @@ const apiSlice = createSlice({
         error: "",
         loading: false,
         profile: null,
-        users:[]
+        users: []
     },
     reducers: {
 
@@ -123,24 +134,27 @@ const apiSlice = createSlice({
         })
         builder.addCase(login.rejected, (state, action) => {
             // state.loading =""
-            state.error = action.payload
+            state.error = action.error.message
+            console.log(action.error.message)
         })
         builder.addCase(login.fulfilled, (state, action) => {
-            state.profile = action.payload._id
-            localStorage.setItem('ACCESS_TOKEN',action.payload.accessToken);
-            localStorage.setItem('REFRESH_TOKEN',action.payload.refreshToken);
+            // state.profile = action.payload._id
+            console.log(action.payload)
+            // localStorage.setItem('ACCESS_TOKEN', action.payload.accessToken);
+            // localStorage.setItem('REFRESH_TOKEN', action.payload.refreshToken);
         })
         builder.addCase(createAccount.pending, (state, action) => {
             //  state.loading = "pending"
         })
         builder.addCase(createAccount.rejected, (state, action) => {
             // state.loading =""
-            state.error = action.payload
+            state.error = action.error.message
+            console.log(action.error.message)
         })
         builder.addCase(createAccount.fulfilled, (state, action) => {
-            state.profile = action.payload._id
-            localStorage.setItem('ACCESS_TOKEN',action.payload.accessToken);
-            localStorage.setItem('REFRESH_TOKEN',action.payload.refreshToken);
+            // state.profile = action.payload._id
+            localStorage.setItem('ACCESS_TOKEN', action.payload.accessToken);
+            localStorage.setItem('REFRESH_TOKEN', action.payload.refreshToken);
         })
         builder.addCase(getUsers.pending, (state, action) => {
             //  state.loading = "pending"
