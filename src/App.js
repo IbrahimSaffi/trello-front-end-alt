@@ -8,6 +8,7 @@ import {Routes,Route,useNavigate} from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import apiSlice, { getTasks, getUsers } from './slices/apiSlice';
+import AddCard from './components/AddCard';
 
 
 function App() {
@@ -15,12 +16,11 @@ function App() {
   let dispatch = useDispatch(apiSlice)
   let goTo = useNavigate()
   useEffect(()=>{
-   if(state.accessToken===""){
+   if(state.profile===null){
      goTo("/login")
    }
    else{
-    dispatch(getTasks())
-    dispatch(getUsers())
+    goTo("/")
    }
   },[])
   return (
@@ -30,6 +30,7 @@ function App() {
         <Route path="/" element={<CardsSection/>} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/signup" element={<SignUpPage/>} />
+        <Route path="/addcard" element={<AddCard/>} />
       </Routes>
     </div>
   );

@@ -3,11 +3,12 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import apiSlice, { createAccount } from '../slices/apiSlice';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function SignUpPage() {
   let dispatch = useDispatch(apiSlice)
+  let state = useSelector(state=>state.apiSlice)
   let goTo = useNavigate()
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -20,18 +21,18 @@ export default function SignUpPage() {
       .required('Required'),
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string().min(6, "Password should be atleast 6 letter long").required('Password is required'),
-    passwordCheck: Yup.string().test("password-match", "Passwords must match", function (value) {
+    confirmPassword: Yup.string().test("password-match", "Passwords must match", function (value) {
       return this.parent.password === value
     }).required('Re-enter Password'),
   });
   return (
-    <div>   <Formik
+    <div className='signup'>   <Formik
       initialValues={{
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        passwordCheck: '',
+        confirmPassword: '',
       }}
       validationSchema={SignupSchema}
       //Some bug here, Will debug
@@ -39,12 +40,23 @@ export default function SignUpPage() {
         values => {
           console.log("here")
           console.log(values)
-          dispatch(createAccount(values))
+          try{
+            let name = values.firstName+" "+values.lastName
+            values.name = name
+            dispatch(createAccount(values))
+            if(state.error===null){
+              goTo("/login")   
+
+            }
+          }
+          catch(err){
+             console.log(err)
+          }
         }
       }
     >
       {({ errors, touched }) => (
-        <Form>
+        <Form className='form' >
           <div>First Name</div>
           <Field name="firstName" />
           {errors.firstName && touched.firstName ? (
@@ -63,10 +75,10 @@ export default function SignUpPage() {
           {errors.password && touched.password ? (
             <div>{errors.password}</div>
           ) : null}
-          <div>reenter Password</div>
-          <Field name="passwordCheck" type="password" />
-          {errors.passwordCheck && touched.passwordCheck ? (
-            <div>{errors.passwordCheck}</div>
+          <div>Confirm Password</div>
+          <Field name="confirmPassword" type="password" />
+          {errors.confirmPassword && touched.confirmPassword ? (
+            <div>{errors.confirmPassword}</div>
           ) : null}
           <button type='submit' onClick={() => console.log("clicked")}>Create Account</button>
         </Form>
