@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-const API_URL = 'http://localhost:8000/';
+const API_URL = 'https://trello-backend2.herokuapp.com/';
 
 export const getTasks = createAsyncThunk(
     "tasks / get",
@@ -25,7 +25,7 @@ export const updateTask = createAsyncThunk(
     "tasks / update",
     async (data ,{getState}) => {
         let state= getState()
-        console.log(state.apiSlice.typeLocBePlaced)
+        console.log(state.apiSlice[state.apiSlice.typeToBePlaced][state.apiSlice.itemToBePlaced]._id)
         const res = await fetch(API_URL + `tasks/update/${state.apiSlice[state.apiSlice.typeToBePlaced][state.apiSlice.itemToBePlaced]._id}`,{
            method:"POST",
             headers:{
