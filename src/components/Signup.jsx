@@ -44,10 +44,7 @@ export default function SignUpPage() {
             let name = values.firstName+" "+values.lastName
             values.name = name
             dispatch(createAccount(values))
-            if(state.error===null){
               goTo("/login")   
-
-            }
           }
           catch(err){
              console.log(err)
