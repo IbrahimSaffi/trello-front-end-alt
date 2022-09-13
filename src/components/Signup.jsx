@@ -88,7 +88,7 @@ export default function SignUpPage() {
         Already a user?
         <button onClick={() => goTo("/login")} >Login</button>
       </p>
+      {state.error}
     </div>
-
   )
 }

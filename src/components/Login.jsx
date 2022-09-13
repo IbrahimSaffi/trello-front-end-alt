@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import {Routes,Route,useNavigate} from 'react-router-dom';
 
-import apiSlice, { login } from '../slices/apiSlice';
+import apiSlice, { getTasks, login } from '../slices/apiSlice';
 
 export default function LoginPage() {
   let dispatch = useDispatch(apiSlice)
@@ -27,7 +27,7 @@ export default function LoginPage() {
         {
           try{
             dispatch(login(values))
-              goTo("/")   
+            goTo("/")
           }
           catch(err){
              console.log(err)
@@ -50,6 +50,7 @@ export default function LoginPage() {
     )}
 </Formik>
 <p>No Account? <button onClick={()=>goTo("/signup")} >Create Account</button></p>
+{state.error}
 </div>
   )
 }

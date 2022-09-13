@@ -14,8 +14,9 @@ export default function CardsSection() {
     if(state.profile===null){
       goTo("/login")
     }
-    console.log(state)
-    dispatch(getTasks())
+    else{
+      dispatch(getTasks())
+    }
   },[])
   return (
     <div className='main' >

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-const API_URL = 'https://trello-backend2.herokuapp.com/';
+const API_URL = 'http://localhost:8000/';
 
 export const getTasks = createAsyncThunk(
     "tasks / get",
@@ -13,7 +13,7 @@ export const getTasks = createAsyncThunk(
         })
         if (res.status!==200){
             let e = await res.json()
-            throw new Error(e)
+            throw new Error(e.error)
        }
        else{
          let resdata = await res.json()
@@ -164,13 +164,29 @@ const apiSlice = createSlice({
             state.itemToBePlaced = null
             state.locToBePlaced = null
           },
+          logout:(state,action)=>{
+           state.accessToken= null
+           state.error= null
+            state.loading= false
+           state.profile= null
+           state.users=[]
+           state.pending=[]
+           state.progress=[]
+           state.completed=[]
+           state.itemToBePlaced=null
+           state.locToBePlaced=null
+           state.typeToBePlaced=null
+            state.typeLocBePlaced=null
+          }
     },
     extraReducers: (builder) => {
         builder.addCase(getTasks.pending, (state, action) => {
-            //  state.loading = "pending"
+            state.loading = true
         })
         builder.addCase(getTasks.rejected, (state, action) => {
             state.error = action.error.message
+            console.log(action.error.message)
+            state.loading = false
         })
         builder.addCase(getTasks.fulfilled, (state, action) => {
             state.pending=[]
@@ -187,55 +203,62 @@ const apiSlice = createSlice({
                     state.completed.push(ele)
                 }
             })
-            // console.log(current(state.pending))
+            state.loading = false
         })
         builder.addCase(createTask.pending, (state, action) => {
-            //  state.loading = "pending"
+             state.loading = true
         })
         builder.addCase(createTask.rejected, (state, action) => {
-            // state.loading =""
+            state.loading = false
             state.error = action.error.message
-            console.log(state.error)
+            console.log(action.error.message)
         })
         builder.addCase(login.pending, (state, action) => {
-            //  state.loading = "pending"
+            state.loading = true
         })
         builder.addCase(login.rejected, (state, action) => {
-            // state.loading =""
-            state.error = action.error.message
+            state.loading = false           
+             state.error = action.error.message
+            console.log(action.error.message)
         })
         builder.addCase(login.fulfilled, (state, action) => {
             state.error=null
+            state.loading = false
             state.profile = action.payload.profile
+            state.accessToken = action.payload.accessToken
             console.log(action.payload)
             localStorage.setItem('ACCESS_TOKEN', action.payload.accessToken);
              localStorage.setItem('REFRESH_TOKEN', action.payload.refreshToken);
              localStorage.setItem('PROFILE', JSON.stringify(action.payload.profile));
         })
         builder.addCase(createAccount.pending, (state, action) => {
-            //  state.loading = "pending"
+            state.loading = true
         })
         builder.addCase(createAccount.rejected, (state, action) => {
-            // state.loading =""
             state.error = action.error.message
+            console.log(action.error.message)
+            state.loading = false
         }) 
         builder.addCase(createAccount.fulfilled, (state, action) => {
-            // state.loading =""
             state.error = null
+            state.loading = false
+
         })
         builder.addCase(getUsers.pending, (state, action) => {
-            //  state.loading = "pending"
         })
         builder.addCase(getUsers.rejected, (state, action) => {
-            // state.loading =""
             state.error = action.error.message
+            console.log(action.error.message)
         }) 
         builder.addCase(getUsers.fulfilled, (state, action) => {
             state.users=action.payload
             state.error = null
+           
+
+
         })
     }
 }
 );
 export default apiSlice.reducer
-export const {dragStart,dragOver,drop } = apiSlice.actions
+export const {dragStart,dragOver,drop,logout } = apiSlice.actions
