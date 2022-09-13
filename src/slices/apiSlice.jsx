@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-const API_URL = 'http://localhost:8000/';
+const API_URL = 'https://trello-backend2.herokuapp.com/';
 
 export const getTasks = createAsyncThunk(
     "tasks / get",
